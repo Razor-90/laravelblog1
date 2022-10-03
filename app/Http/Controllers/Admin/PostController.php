@@ -93,7 +93,11 @@ class PostController extends Controller
 
         $post = Post::find($id);
         $data = $request->all();
-        $data['thumbnail'] = Post::uploadImage($request, $post->thumbnail);
+        
+        if($file = Post::uploadImage($request, $post->thumbnail)){
+             $data['thumbnail'] = $file;
+        }
+
 
         $post->update($data);
         $post->tags()->sync($request->tags);
@@ -101,12 +105,7 @@ class PostController extends Controller
         return redirect()->route('posts.index')->with('success', 'Изменения сохранены');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\RedirectResponse
-     */
+
     public function destroy($id)
     {
         $post = Post::find($id);

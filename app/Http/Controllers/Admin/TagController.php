@@ -2,72 +2,58 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Category;
 use App\Http\Controllers\Controller;
+use App\Tag;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class TagController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        //
-        $categories = Category::paginate(10);
-        return view('admin.categories.index', compact('categories'));
+        $tags = Tag::paginate(20);
+        return view('admin.tags.index', compact('tags'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create()
     {
-        //
-        return view('admin.categories.create');
+        return view('admin.tags.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
         $request->validate([
             'title' => 'required',
         ]);
-        Category::create($request->all());
-        return redirect()->route('categories.index')->with('success', 'Category add');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+        Tag::create($request->all());
+        return redirect()->route('tags.index')->with('success', 'Тег добавлен');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function edit($id)
     {
-        //
-        $category = Category::find($id);
-        return view('admin.categories.edit', compact('category'));
+        $tag = Tag::find($id);
+        return view('admin.tags.edit', compact('tag'));
     }
 
     /**
@@ -75,31 +61,31 @@ class CategoryController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
-        //
         $request->validate([
             'title' => 'required',
         ]);
-
-        $category = Category::find($id);
-        $category->update($request->all());
-        return redirect()->route('categories.index')->with('success', 'Category update');
+        $tag = Tag::find($id);
+        $tag->update($request->all());
+        return redirect()->route('tags.index')->with('success', 'Изменения сохранены');
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
-        //
-        $category = Category::find($id);
+        $tag = Tag::find($id);
+        if ($tag->posts->count()){
+            return redirect()->route('tags.index')->with('error', 'Ошибка у тэга есть запись');
+        }
         $category->delete();
-        return redirect()->route('categories.index')->with('success', 'Category delete');
+        return redirect()->route('tags.index')->with('success', 'Тэг удален');
     }
 }
