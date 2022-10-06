@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Tag;
+use App\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -10,9 +10,9 @@ class CategoryController extends Controller
 
     public function show($slug)
     {
-        $tag = Tag::where('slug', $slug)->firstOrFail();
-        $posts = $tag->posts()->orderBy('id', 'desc')->paginate(2);
-        return view('tags.show', compact('tag', 'posts'));
+        $category = Category::where('slug', $slug)->firstOrFail();
+        $posts = $category->posts()->orderBy('id', 'desc')->paginate(2);
+        return view('categories.show', compact('category', 'posts'));
     }
 
 }
